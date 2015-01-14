@@ -30,7 +30,12 @@ namespace WPFTest
 
         private void list_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
-            MessageBox.Show("fuck");
+            var v = list.SelectedItem as Article;
+            var art = Article.CreateArticle(v.Url);
+            TextConent pop = new TextConent();
+            pop.image1.Source = new BitmapImage(new Uri(art.ImageUrl, UriKind.Absolute));
+            pop.txt1.Text = art.Content;
+            pop.ShowDialog();
         }
 
     }

@@ -22,16 +22,31 @@ namespace WPFTest
         public static IList<Article> CreateArticles(string url)
         {
             var result = client.GetStringAsync(new Uri(url, UriKind.Absolute)).Result;
-            var matchs = regexShot.Matches(result);
+            var matchs = Regex.Matches(result, shotContentReg);
             List<Article> list = new List<Article>();
             foreach(Match m in matchs)
             {
+                string hrefs = Regex.Match(m.Value, hrefReg).Value;
+                var realHrefs = Regex.Match(hrefs, realHrefReg).Value;
                 var str = Regex.Replace(m.Value, "</p>", "\n");
                 str = Regex.Replace(str, "</?[^>]+/?>","");
                 str = Regex.Replace(str, "&nbsp;", " ");
-                list.Add(new Article() { Content =str});
+                list.Add(new Article() { Content = str, Url = realHrefs });
             }
             return list;
+        }
+
+        public static Article CreateArticle(string url)
+        {
+            var result = client.GetStringAsync(new Uri(url, UriKind.Absolute)).Result;
+            var match = Regex.Match(result, shotContentReg).Value;
+            var heads = Regex.Match(match, headReg).Value;
+            var imageurl = Regex.Match(match, imageReg).Value;
+            var content = Regex.Match(match, contentReg).Value;
+            content = Regex.Replace(content.Substring(0, content.IndexOf("<p>——————————————————————————</p>")), "</p>", "\n");
+            content = Regex.Replace(content, "</?[^>]+/?>", "");
+            content = Regex.Replace(content, "&nbsp;", " ");
+            return new Article() { Content = content, ImageUrl = imageurl };
         }
         public string Author { get; set; }
         public string Hot { get; set; }
@@ -40,11 +55,14 @@ namespace WPFTest
         public string ShortContent { get; set; }
         public string Url { get; set; }
         public string Content { get; set; }
-
+        public string ImageUrl { get; set; }
         private static HttpClient client = new HttpClient();
-        private static string shortContent = @"<div class=""short"">[\s\S]*?<div class=""shot"">[\s\S]*?</div>[\s\S]*?</div>";
-        private static Regex regex = new Regex(shortContent);
-        private static string shotContent = "<div class=\"shot\">[\\s\\S]*?</div>";
-        private static Regex regexShot = new Regex(shotContent);
+        private static string shortContentReg = "<div class=\"short\">[\\s\\S]*?<div class=\"shot\">[\\s\\S]*?</div>[\\s\\S]*?</div>";
+        private static string shotContentReg = "<div class=\"shot\">[\\s\\S]*?</div>";
+        private static string hrefReg = "<a href=\"http://meiwenrishang.com/post/(.*?) class=\"cont\">";
+        private static string realHrefReg = @"http://meiwenrishang.com/post/[\w-/]*";
+        private static string headReg = "<h2>.*</h2>";
+        private static string imageReg = "http://.*?jpeg";
+        private static string contentReg = "<div class=\"shot\">[\\s\\S]*?<p>——————————————————————————</p>";
     }
 }
