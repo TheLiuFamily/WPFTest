@@ -2,18 +2,48 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="MainWindow" Height="350" Width="525">
-    <Grid>
-        <ListView Name="list" MouseDoubleClick="list_MouseDoubleClick">
-            <ListView.View>
+    
+    
+    <ListView x:Name="list" ItemsSource="{Binding}" AlternationCount="2" MouseDoubleClick="list_MouseDoubleClick">
+        <ListView.ItemContainerStyle>
+            <Style TargetType="{x:Type ListViewItem}">
+                <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                <Setter Property="Background" Value="LightSteelBlue" />
+                <Setter Property="Margin" Value="5"></Setter>
+                <Setter Property="Padding" Value="5"></Setter>
+                <Style.Triggers>
+                    <Trigger Property="ItemsControl.AlternationIndex" Value="1">
+                        <Setter Property="Background" Value="LightBlue" />
+                    </Trigger>
+                    <Trigger Property="IsSelected" Value="True">
+                        <Setter Property="Background" Value="DarkRed" />
+                        <Setter Property="Foreground" Value="DeepSkyBlue" />
+                        <Setter Property="BorderBrush" Value="Black" />
+                        <Setter Property="BorderThickness" Value="1" />
+                    </Trigger>
+                </Style.Triggers>
+            </Style>
+        </ListView.ItemContainerStyle>
+        <ListView.ItemTemplate>
+            <DataTemplate>
+                <!-- 每个项目都用显示边框，更好的区分开-->
+                <Border BorderBrush="Blue" BorderThickness="0" Margin="0, 10, 0, 0">
+                    <!--这里简单的把每个项目的宽度都拉长，以便效果明显-->
+                    <Grid Width="400">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*"></RowDefinition>
+                            <RowDefinition Height="20"></RowDefinition>
+                            <RowDefinition></RowDefinition>
+                        </Grid.RowDefinitions>
+                        <StackPanel>
+                            <TextBlock Text="{Binding Path=Head}" FontSize="24"></TextBlock>
+                            <TextBlock Text="{Binding Path=Content}" TextWrapping="Wrap"></TextBlock>
+                        </StackPanel>
+                        <TextBlock Grid.Row="1" HorizontalAlignment="Right"  Text="{Binding Path=Time}"></TextBlock>
+                    </Grid>
+                </Border>
 
-                <GridView x:Name="gridView1" >
-
-                    <GridViewColumn Header="Content" DisplayMemberBinding="{Binding Path=Content}"></GridViewColumn>
-
-
-                </GridView>
-
-            </ListView.View>
-        </ListView>
-    </Grid>
+            </DataTemplate>
+        </ListView.ItemTemplate>
+    </ListView>
 </Window>
