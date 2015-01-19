@@ -35,6 +35,7 @@ namespace WPFTest
             TextConent pop = new TextConent();
             pop.image1.Source = new BitmapImage(new Uri(art.ImageUrl, UriKind.Absolute));
             pop.txt1.Text = art.Content;
+            pop.head1.Text = art.Head;
             pop.ShowDialog();
         }
 

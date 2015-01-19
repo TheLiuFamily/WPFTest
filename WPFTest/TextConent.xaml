@@ -9,7 +9,10 @@
         </Grid.RowDefinitions>
         <Image Name="image1" Grid.Row="0" Stretch="Uniform"></Image>
         <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
-        <TextBlock Name="txt1" TextWrapping="Wrap"></TextBlock>
+            <StackPanel>
+            <TextBlock Name="head1"></TextBlock>
+            <TextBlock Name="txt1" TextWrapping="Wrap"></TextBlock>
+            </StackPanel>
         </ScrollViewer>
     </Grid>
 </Window>

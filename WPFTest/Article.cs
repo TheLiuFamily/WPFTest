@@ -31,7 +31,10 @@ namespace WPFTest
                 var str = Regex.Replace(m.Value, "</p>", "\n");
                 str = Regex.Replace(str, "</?[^>]+/?>","");
                 str = Regex.Replace(str, "&nbsp;", " ");
-                list.Add(new Article() { Content = str, Url = realHrefs });
+
+                var heads = Regex.Match(result, headReg).Value;
+                heads = Regex.Replace(heads, "</?[^>]+/?>", "");
+                list.Add(new Article() { Content = str, Url = realHrefs, Head = heads });
             }
             return list;
         }
@@ -40,13 +43,15 @@ namespace WPFTest
         {
             var result = client.GetStringAsync(new Uri(url, UriKind.Absolute)).Result;
             var match = Regex.Match(result, shotContentReg).Value;
-            var heads = Regex.Match(match, headReg).Value;
+            var heads = Regex.Match(result, headReg).Value;
             var imageurl = Regex.Match(match, imageReg).Value;
             var content = Regex.Match(match, contentReg).Value;
             content = Regex.Replace(content.Substring(0, content.IndexOf("<p>——————————————————————————</p>")), "</p>", "\n");
             content = Regex.Replace(content, "</?[^>]+/?>", "");
             content = Regex.Replace(content, "&nbsp;", " ");
-            return new Article() { Content = content, ImageUrl = imageurl };
+
+            heads = Regex.Replace(heads, "</?[^>]+/?>", "");
+            return new Article() { Content = content, ImageUrl = imageurl, Head = heads };
         }
         public string Author { get; set; }
         public string Hot { get; set; }
